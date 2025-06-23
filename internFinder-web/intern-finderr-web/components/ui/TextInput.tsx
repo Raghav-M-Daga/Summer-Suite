@@ -1,52 +1,40 @@
-import { useThemeColor } from '@/hooks/useThemeColor';
+import React from 'react';
 
-interface Props {
+interface TextInputProps {
+  placeholder?: string;
   value?: string;
   onChangeText?: (text: string) => void;
-  placeholder?: string;
   secureTextEntry?: boolean;
+  keyboardType?: 'email-address' | 'default';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-  style?: React.CSSProperties;
   className?: string;
+  [key: string]: any;
 }
 
-export function TextInput({ 
+export function TextInput({
+  placeholder,
   value,
   onChangeText,
-  placeholder,
   secureTextEntry = false,
-  autoCapitalize = 'sentences',
   keyboardType = 'default',
-  style,
+  autoCapitalize = 'none',
   className = '',
-  ...props 
-}: Props) {
+  ...props
+}: TextInputProps) {
   const getInputType = () => {
     if (secureTextEntry) return 'password';
     if (keyboardType === 'email-address') return 'email';
-    if (keyboardType === 'numeric') return 'number';
-    if (keyboardType === 'phone-pad') return 'tel';
     return 'text';
-  };
-
-  const getAutoCapitalize = () => {
-    if (autoCapitalize === 'none') return 'off';
-    if (autoCapitalize === 'sentences') return 'sentences';
-    if (autoCapitalize === 'words') return 'words';
-    if (autoCapitalize === 'characters') return 'characters';
-    return 'on';
   };
 
   return (
     <input
       type={getInputType()}
       value={value}
-      onChange={(e) => onChangeText?.(e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeText?.(e.target.value)}
       placeholder={placeholder}
-      autoCapitalize={getAutoCapitalize()}
-      className={`form-input ${className}`}
-      style={style}
+      autoCapitalize={autoCapitalize}
+      className={`text-input ${className}`}
       {...props}
     />
   );

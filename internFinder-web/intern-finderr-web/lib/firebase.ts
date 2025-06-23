@@ -37,8 +37,11 @@ export const signInWithEmailPassword = async (email: string, password: string) =
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred during sign in.');
   }
 };
 
@@ -46,15 +49,21 @@ export const signUpWithEmailPassword = async (email: string, password: string) =
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     return userCredential.user;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred during sign up.');
   }
 };
 
 export const signOut = async () => {
   try {
     await firebaseSignOut(auth);
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred during sign out.');
   }
 }; 

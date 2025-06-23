@@ -2,11 +2,11 @@
 
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
-import { useAuth } from '@/lib/AuthContext';
 import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import Link from 'next/link';
 import { useState } from 'react';
+import { FirebaseError } from 'firebase/app';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -25,17 +25,16 @@ export default function SignIn() {
         return;
       }
       
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       
-      // The redirect is handled by the AuthProvider, so no need for router.push here
-      // This also simplifies the logic by removing the hasCompletedProfile check
-      
-    } catch (err: any) {
+    } catch (err: unknown) {
       let errorMessage = 'Failed to sign in. Please try again.';
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        errorMessage = 'Invalid email or password.';
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'Please enter a valid email address.';
+      if (err instanceof FirebaseError) {
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+          errorMessage = 'Invalid email or password.';
+        } else if (err.code === 'auth/invalid-email') {
+          errorMessage = 'Please enter a valid email address.';
+        }
       }
       setError(errorMessage);
     } finally {
@@ -71,8 +70,8 @@ export default function SignIn() {
             <input type="checkbox" id="remember" className="checkbox" />
             <label htmlFor="remember">Remember for 30 days</label>
           </div>
-          <Link href="/forgot-password" legacyBehavior>
-            <a className="auth-link text-sm">Forgot password</a>
+          <Link href="/forgot-password">
+            Forgot password
           </Link>
         </div>
         
@@ -89,9 +88,9 @@ export default function SignIn() {
         </Button>
 
         <p className="auth-footer">
-          Don't have an account?{' '}
-          <Link href="/sign-up" legacyBehavior>
-            <a className="auth-link">Sign up</a>
+          Don&apos;t have an account?{' '}
+          <Link href="/sign-up" className="auth-link">
+            Sign up
           </Link>
         </p>
       </div>
