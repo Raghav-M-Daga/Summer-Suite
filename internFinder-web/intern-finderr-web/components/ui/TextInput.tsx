@@ -5,7 +5,7 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   value?: string;
   onChangeText?: (text: string) => void;
   secureTextEntry?: boolean;
-  keyboardType?: 'email-address' | 'default';
+  keyboardType?: 'email-address' | 'default' | 'numeric';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   className?: string;
 }
@@ -23,6 +23,7 @@ export function TextInput({
   const getInputType = () => {
     if (secureTextEntry) return 'password';
     if (keyboardType === 'email-address') return 'email';
+    if (keyboardType === 'numeric') return 'number';
     return 'text';
   };
 
