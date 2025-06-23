@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface TextInputProps {
+interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   value?: string;
   onChangeText?: (text: string) => void;
@@ -8,7 +8,6 @@ interface TextInputProps {
   keyboardType?: 'email-address' | 'default';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   className?: string;
-  [key: string]: any;
 }
 
 export function TextInput({
