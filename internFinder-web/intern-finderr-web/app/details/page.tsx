@@ -23,9 +23,6 @@ export default function DetailsPage() {
   const [zip, setZip] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [duration, setDuration] = useState('');
-  const [showGenderModal, setShowGenderModal] = useState(false);
-  const [showEthnicityModal, setShowEthnicityModal] = useState(false);
-  const [showStateModal, setShowStateModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const { user, updateUserProfile, userProfile } = useAuth();
@@ -166,12 +163,6 @@ export default function DetailsPage() {
       alert(errorMessage);
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleSkip = () => {
-    if (confirm('You can always complete your profile later. Continue to the app?')) {
-      router.push('/home');
     }
   };
 

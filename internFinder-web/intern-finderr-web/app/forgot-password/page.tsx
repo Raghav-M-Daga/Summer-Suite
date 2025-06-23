@@ -1,7 +1,6 @@
 'use client';
 
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 import { auth } from '@/lib/firebase';
@@ -9,6 +8,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { FirebaseError } from 'firebase/app';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -30,18 +30,20 @@ export default function ForgotPassword() {
     try {
       await sendPasswordResetEmail(auth, email);
       setSuccess('Password reset email sent! Check your inbox.');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Password reset error:', err);
       let errorMessage = 'Failed to send reset email';
       
-      if (err.code === 'auth/user-not-found') {
-        errorMessage = 'No account found with this email address';
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address';
-      } else if (err.code === 'auth/too-many-requests') {
-        errorMessage = 'Too many requests. Please try again later';
-      } else if (err.message) {
-        errorMessage = err.message;
+      if (err instanceof FirebaseError) {
+        if (err.code === 'auth/user-not-found') {
+          errorMessage = 'No account found with this email address';
+        } else if (err.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address';
+        } else if (err.code === 'auth/too-many-requests') {
+          errorMessage = 'Too many requests. Please try again later';
+        } else {
+          errorMessage = err.message;
+        }
       }
       
       setError(errorMessage);
@@ -51,55 +53,49 @@ export default function ForgotPassword() {
   };
 
   return (
-    <ThemedView className="flex-1 p-5">
-      <div className="flex-1 flex flex-col justify-center pt-10 pb-10">
-        <div className="mb-5">
-          <button className="back-button" onClick={() => router.back()}>
-            ← Back
-          </button>
-        </div>
+    <div className="auth-page">
+      <div className="auth-header">InternFinder</div>
+      <div className="auth-container">
+        <h1 className="auth-title" style={{ marginBottom: '1rem' }}>Reset Password</h1>
+        <p className="auth-subtitle" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            Enter your email address and we&apos;ll send you a link to reset your password.
+        </p>
 
-        <ThemedText type="title" className="text-center mb-10 text-3xl">Reset Password</ThemedText>
-
-        <div className="flex flex-col gap-4 mb-10">
-          <ThemedText className="text-center opacity-70 mb-4">
-            Enter your email address and we'll send you a link to reset your password.
-          </ThemedText>
-
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <TextInput
-            placeholder="Email"
+            placeholder="Email address"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
-            leftIcon="mail"
+            keyboardType="email-address"
           />
-          
-          {error && (
-            <div className="error-message text-center">{error}</div>
-          )}
-
-          {success && (
-            <div className="success-message text-center">{success}</div>
-          )}
-
-          <Button 
-            onClick={handleResetPassword} 
-            className="mt-2"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Sending...' : 'Send Reset Email'}
-          </Button>
         </div>
 
-        <div className="flex justify-center">
-          <ThemedText>
-            Remember your password?{' '}
-            <Link href="/sign-in" className="link-bold">
-              Sign In
-            </Link>
-          </ThemedText>
-        </div>
+        <div style={{ height: '1.5rem' }} />
+        
+        {error && (
+          <p className="error-message">{error}</p>
+        )}
+
+        {success && (
+          <p className="success-message">{success}</p>
+        )}
+
+        <Button 
+          onClick={handleResetPassword} 
+          variant="primary"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Sending...' : 'Send Reset Email'}
+        </Button>
+
+        <p className="auth-footer">
+          Remember your password?{' '}
+          <Link href="/sign-in" className="auth-link">
+            Sign In
+          </Link>
+        </p>
       </div>
-    </ThemedView>
+    </div>
   );
 } 

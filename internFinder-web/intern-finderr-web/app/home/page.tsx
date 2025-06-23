@@ -1,7 +1,5 @@
 'use client';
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -13,8 +11,12 @@ export default function HomePage() {
   const handleSignOut = async () => {
     try {
       await signOut();
-    } catch (error: any) {
-      alert('Sign Out Error: ' + error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert('Sign Out Error: ' + error.message);
+      } else {
+        alert('An unknown error occurred during sign out.');
+      }
     }
   };
 
