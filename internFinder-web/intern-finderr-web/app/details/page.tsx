@@ -129,17 +129,21 @@ export default function DetailsPage() {
       };
 
       // Remove undefined fields (including nested address)
-      function removeUndefined(obj: any) {
-        if (typeof obj !== 'object' || obj === null) return obj;
-        const newObj: any = Array.isArray(obj) ? [] : {};
-        for (const key in obj) {
-          if (obj[key] !== undefined) {
-            newObj[key] = removeUndefined(obj[key]);
+      function removeUndefined(obj: unknown): unknown {
+        if (Array.isArray(obj)) {
+          return obj.map(removeUndefined);
+        } else if (obj && typeof obj === 'object') {
+          const newObj: Record<string, unknown> = {};
+          for (const key in obj as Record<string, unknown>) {
+            if ((obj as Record<string, unknown>)[key] !== undefined) {
+              newObj[key] = removeUndefined((obj as Record<string, unknown>)[key]);
+            }
           }
+          return newObj;
         }
-        return newObj;
+        return obj;
       }
-      const cleanedProfileData = removeUndefined(userProfileData);
+      const cleanedProfileData = removeUndefined(userProfileData) as typeof userProfileData;
 
       // Save to Firestore using the db instance
       const db = getFirebaseDb();
