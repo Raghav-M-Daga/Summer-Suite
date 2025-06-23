@@ -272,9 +272,11 @@ export default function ConnectionsPage() {
       {activeTab === 'requests' && (
         <div>
           {connectionRequests.length === 0 ? (
-            <div className="text-center py-10">
-              <ThemedText className="text-xl font-bold mb-2">No pending requests</ThemedText>
-              <ThemedText className="opacity-70">You don't have any pending connection requests</ThemedText>
+            <div className="text-center" style={{ padding: '2.5rem 0' }}>
+              <ThemedText type="subtitle">No pending requests</ThemedText>
+              <ThemedText style={{ opacity: 0.7, marginTop: '0.5rem' }}>
+                You don&apos;t have any pending connection requests
+              </ThemedText>
             </div>
           ) : (
             <div className="space-y-4">

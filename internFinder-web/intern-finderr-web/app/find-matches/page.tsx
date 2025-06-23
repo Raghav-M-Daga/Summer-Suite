@@ -28,7 +28,6 @@ export default function FindMatchPage() {
   const { user } = useAuth();
   const [matches, setMatches] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [proximity, setProximity] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {

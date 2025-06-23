@@ -9,6 +9,7 @@ import { getFirebaseDb } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FirebaseError } from 'firebase/app';
 
 export default function DetailsPage() {
   const [firstName, setFirstName] = useState('');
@@ -147,17 +148,19 @@ export default function DetailsPage() {
       
       alert('Your profile has been saved successfully.');
       router.push('/home');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving user details:', error);
       
       let errorMessage = 'Failed to save user details. Please try again.';
       
-      if (error.code === 'permission-denied') {
-        errorMessage = 'Permission denied. Please check your Firebase security rules.';
-      } else if (error.code === 'unavailable') {
-        errorMessage = 'Network error. Please check your internet connection.';
-      } else if (error.message) {
-        errorMessage = error.message;
+      if (error instanceof FirebaseError) {
+        if (error.code === 'permission-denied') {
+          errorMessage = 'Permission denied. Please check your Firebase security rules.';
+        } else if (error.code === 'unavailable') {
+          errorMessage = 'Network error. Please check your internet connection.';
+        } else {
+          errorMessage = error.message;
+        }
       }
       
       alert(errorMessage);
