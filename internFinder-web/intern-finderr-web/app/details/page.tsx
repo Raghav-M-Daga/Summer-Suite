@@ -128,12 +128,25 @@ export default function DetailsPage() {
         updatedAt: new Date()
       };
 
+      // Remove undefined fields (including nested address)
+      function removeUndefined(obj: any) {
+        if (typeof obj !== 'object' || obj === null) return obj;
+        const newObj: any = Array.isArray(obj) ? [] : {};
+        for (const key in obj) {
+          if (obj[key] !== undefined) {
+            newObj[key] = removeUndefined(obj[key]);
+          }
+        }
+        return newObj;
+      }
+      const cleanedProfileData = removeUndefined(userProfileData);
+
       // Save to Firestore using the db instance
       const db = getFirebaseDb();
       if (db) {
         const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, userProfileData, { merge: true });
-        console.log('User profile saved to Firestore:', userProfileData);
+        await setDoc(userDocRef, cleanedProfileData, { merge: true });
+        console.log('User profile saved to Firestore:', cleanedProfileData);
       } else {
         console.log('Firestore not available, using mock save');
         // Mock save for testing
@@ -141,7 +154,7 @@ export default function DetailsPage() {
       }
       
       // Update the user's profile status in the context
-      await updateUserProfile(userProfileData);
+      await updateUserProfile(cleanedProfileData);
       
       alert('Your profile has been saved successfully.');
       router.push('/home');
