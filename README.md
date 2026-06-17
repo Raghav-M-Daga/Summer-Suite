@@ -1,4 +1,4 @@
-# InternFinder
+# Summer Suite
 
 A modern web application designed to help tech interns connect with each other, build professional networks, and find internship opportunities. Built with Next.js, Firebase, and TypeScript.
 
